@@ -8,12 +8,10 @@ int main()
     char    *p;
     char    a;
 
-    p = &a;
-    i = -22;
-    f = 0.0567;
-    printf("%p\n", p);
-    printf("%#x", 0);
-    ft_printf("%#x", 0);
+    i = ft_printf("%-+10.5d\n", 4242);
+    f = printf("%-+10.5d\n", 4242);
+    printf("%i\n", i);
+    printf("%i\n", f);
     //ft_printf("The number is %.5f\n", f);
     // Все флаги, ширина, точность вроде работают с типами d и i
     // Типы s и c вроде работают

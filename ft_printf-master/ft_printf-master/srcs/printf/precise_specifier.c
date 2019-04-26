@@ -6,7 +6,7 @@
 /*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
-/*   Updated: 2019/04/25 17:46:23 by mrolfe           ###   ########.fr       */
+/*   Updated: 2019/04/26 17:38:13 by mrolfe           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*precise_specifier(char *res, t_spec *spec)
 	else if (spec->type == 'p')
 		ret = p_precise(res, spec);
 	else if (spec->type == 'x' || spec->type == 'X')
-		ret = xX_precise(res, spec);
+		ret = x_bigx_precise(res, spec);
 	else if (spec->type != 'c')
 		ret = other_precise(res, spec);
 	else
@@ -31,7 +31,7 @@ char	*precise_specifier(char *res, t_spec *spec)
 	return (ret);
 }
 
-char	*xX_precise(char *res, t_spec *spec)
+char	*x_bigx_precise(char *res, t_spec *spec)
 {
 	char	*ret;
 
@@ -70,14 +70,11 @@ char	*p_precise(char *res, t_spec *spec)
 
 char	*other_precise(char *res, t_spec *spec)
 {
-	char	*ret;
-	int		len;
-	int		i;
-	char	*point;
+	t_precise params;
 
-	i = 0;
-	point = NULL;
-	len = (int)ft_strlen((char*)res);
+	params.i = 0;
+	params.point = NULL;
+	params.len = (int)ft_strlen((char*)res);
 	if (zero)
 		return (res);
 	if (spec->precision == 0 && res[0] == '0' && res[1] == '\0')
@@ -87,24 +84,31 @@ char	*other_precise(char *res, t_spec *spec)
 	}
 	if (res[0] == '0' && res[1] == '\0' && spec->type == 'o')
 		return (res);
-	if (check_minus(res, &point))
+	if (check_minus(res, &params.point))
 		spec->precision += 1;
 	if (spec->precision == 0 && res[1] == '0' && res[2] == '\0')
 	{
 		res[1] = '\0';
 		return (res);
 	}
-	if (len < spec->precision && spec->type != '%')
-	{
-		if (!(ret = ft_strnew((int)spec->precision)))
-			return (NULL);
-		while (i < spec->precision - len)
-			ret[i++] = '0';
-		ft_strcpy(&ret[i], (char*)res);
-		free((char*)res);
-		return (ret);
-	}
+	if (params.len < spec->precision && spec->type != '%')
+		return (other_precise2(res, spec));
 	return (res);
+}
+
+char	*other_precise2(char *res, t_spec *spec)
+{
+	char	*ret;
+	int		len;
+
+	len = ft_strlen(res);
+	if (!(ret = ft_strnew((int)spec->precision)))
+		return (NULL);
+	while (i < spec->precision - len)
+		ret[i++] = '0';
+	ft_strcpy(&ret[i], (char*)res);
+	free((char*)res);
+	return (ret);
 }
 
 char	*s_precise(char *res, t_spec *spec)
@@ -124,9 +128,9 @@ char	*s_precise(char *res, t_spec *spec)
 
 char	*f_precise(char *res, t_spec *spec)
 {
-   int		i;
-   char		*ret;
-   int		count;
+	int		i;
+	char	*ret;
+	int		count;
 
 	i = 0;
 	count = 0;

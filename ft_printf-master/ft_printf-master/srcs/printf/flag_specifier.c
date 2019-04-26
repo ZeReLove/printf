@@ -6,7 +6,7 @@
 /*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
-/*   Updated: 2019/04/25 20:08:37 by mrolfe           ###   ########.fr       */
+/*   Updated: 2019/04/26 19:21:20 by mrolfe           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ char	*zero_flag(char *res, t_spec *spec)
 {
 	int		len;
 	int		i;
-	char	*ret;
 	int		size;
 
 	i = 0;
@@ -51,20 +50,22 @@ char	*zero_flag(char *res, t_spec *spec)
 		spec->type == 's' || spec->type == 'c' || spec->type == '%')
 	{
 		if (len < spec->width)
-			zero_flag2(res, spec);
+			return(zero_flag2(&res, spec, &len));
 	}
 	return (res);
 }
 
-char	*zero_flag2(char *res, t_spec *spec)
+char	*zero_flag2(char **res, t_spec *spec, int *len)
 {
 	char	*ret;
+	int		size;
 
+	size = spec->width;
 	if (!(ret = ft_strnew((int)size)))
 		return (NULL);
-	ft_memset(ret, '0', spec->width - len);
-	ft_strcpy(&ret[(spec->width) - len], (char*)res);
-	free((char*)res);
+	ft_memset(ret, '0', spec->width - (int)len[0]);
+	ft_strcpy(&ret[(spec->width) - (int)len[0]], (char*)res[0]);
+	free((char*)res[0]);
 	return (ret);
 }
 
@@ -93,7 +94,6 @@ char	*minus_flag(char *res, t_spec *spec)
 char	*plus_flag(char *res, t_spec *spec)
 {
 	int		len;
-	char	*ret;
 	char	*point;
 
 	point = NULL;
@@ -107,36 +107,38 @@ char	*plus_flag(char *res, t_spec *spec)
 				res[0] = '+';
 				return (res);
 			}
-			plus_flag2(res, spec);
-			}
+			if (res[len - 1] == ' ')
+				return (plus_flag2(res, &len));
+			else
+				return (plus_flag3(res, &len));
 		}
+			
 	}
 	return (res);
 }
 
-char	*plus_flag2(char *res, t_spec *spec)
+char	*plus_flag2(char *res, int *len)
 {
-	int		len;
 	char	*ret;
 
-	if (res[len - 1] == ' ')
-	{
-		if (!(ret = ft_strnew(len)))
-			return (NULL);
-		ft_strncpy(&ret[1], res, len - 1);
-		ret[0] = '+';
-		free((char*)res);
-		return (ret);
-	}
-	else
-	{
-		if (!(ret = ft_strnew(len + 1)))
-			return (NULL);
-		ret[0] = '+';
-		ft_strcpy(&ret[1], (char*)res);
-		free((char*)res);
-		return (ret);
-	}
+	if (!(ret = ft_strnew((int)len[0])))
+		return (NULL);
+	ft_strncpy(&ret[1], res, (int)len[0] - 1);
+	ret[0] = '+';
+	free((char*)res);
+	return (ret);
+}
+
+char	*plus_flag3(char *res, int *len)
+{
+	char	*ret;
+
+	if (!(ret = ft_strnew((int)len[0] + 1)))
+		return (NULL);
+	ret[0] = '+';
+	ft_strcpy(&ret[1], (char*)res);
+	free((char*)res);
+	return (ret);
 }
 
 char	*hash_flag(char *res, t_spec *spec)
@@ -144,6 +146,7 @@ char	*hash_flag(char *res, t_spec *spec)
 	int		len;
 	char	*ret;
 
+	ret = NULL;
 	len = (int)ft_strlen((char*)res);
 	if (spec->type == 'o')
 	{
@@ -156,21 +159,20 @@ char	*hash_flag(char *res, t_spec *spec)
 			free((char*)res);
 		}
 		else
-			hash_flag_else(res, spec);
-		return (ret);
+			return (hash_flag_else(res, spec, &len));
 	}
 	if (spec->type == 'x' || spec->type == 'X')
-		hash_flag_forxX(res, spec);
+		return (hash_flag_forx_bigx(res, spec, &len));
 	return (res);
 }
 
-char	*hash_flag_forxX(char *res, t_spec *spec)
+char	*hash_flag_forx_bigx(char *res, t_spec *spec, int *len)
 {
 	char	*ret;
 
 	if (res[0] == '0')
 		return (res);
-	if (!(ret = ft_strnew(len + 2)))
+	if (!(ret = ft_strnew((int)len[0] + 2)))
 		return (NULL);
 	ret[0] = '0';
 	if (spec->type == 'x')
@@ -182,17 +184,18 @@ char	*hash_flag_forxX(char *res, t_spec *spec)
 	return (ret);
 }
 
-char	*hash_flag_else(char *res, t_spec *spec)
+char	*hash_flag_else(char *res, t_spec *spec, int *len)
 {
 	char	*ret;
 
 	if (res[0] == '0' && res[1] == '\0' && spec->precision == -1)
 		return (res);
-	if (!(ret = ft_strnew(len + 1)))
+	if (!(ret = ft_strnew((int)len[0] + 1)))
 		return (NULL);
 	ret[0] = '0';
 	ft_strcpy(&ret[1], (char*)res);
 	free((char*)res);
+	return (NULL);
 }
 
 char	*space_flag(char *res, t_spec *spec)

@@ -6,7 +6,7 @@
 /*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
-/*   Updated: 2019/04/25 17:24:02 by mrolfe           ###   ########.fr       */
+/*   Updated: 2019/04/26 17:26:06 by mrolfe           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*type_specifier(t_spec *spec, va_list *ap)
 		res = type_p(res, ap, spec);
 	else if (spec->type == 'o'
 			|| spec->type == 'x' || spec->type == 'X')
-		res = type_oxX(res, spec, ap);
+		res = type_ox_bigx(res, spec, ap);
 	else if (spec->type == 'f')
 		res = type_f(res, ap, spec);
 	else if (spec->type == 'i' || spec->type == 'd')
@@ -63,7 +63,7 @@ char	*type_u(char *res, va_list *ap, t_spec *spec)
 	return (res);
 }
 
-char	*type_oxX(char *res, t_spec *spec, va_list *ap)
+char	*type_ox_bigx(char *res, t_spec *spec, va_list *ap)
 {
 	unsigned long long	nb;
 	int					base;

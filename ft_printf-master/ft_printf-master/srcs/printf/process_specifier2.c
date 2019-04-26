@@ -6,7 +6,7 @@
 /*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
-/*   Updated: 2019/04/25 19:30:12 by mrolfe           ###   ########.fr       */
+/*   Updated: 2019/04/26 18:11:36 by mrolfe           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void		process_specifier(char *format, va_list *ap)
 {
-    int		dot;
+	int		dot;
 	int		j;
 	t_spec	spec;
 	int		k;
@@ -26,8 +26,8 @@ void		process_specifier(char *format, va_list *ap)
 	find_width_param(&format[i], ap, &spec);
 	i++;
 	while (format[i] && format[i] != 'c' && format[i] != 's' && format[i] != 'p'
-			&& format[i] != 'd' && format[i] != 'i' && format[i] !='o' && 
-			format[i] != 'u' && format[i] != 'x' && format[i] != 'X' && 
+			&& format[i] != 'd' && format[i] != 'i' && format[i] != 'o' &&
+			format[i] != 'u' && format[i] != 'x' && format[i] != 'X' &&
 			format[i] != 'f' && format[i] != '%')
 	{
 		if (format[i] == '.')
@@ -44,17 +44,7 @@ void		process_specifier(char *format, va_list *ap)
 	i++;
 	format[j--] = '\0';
 	if (format[j] == 'h' || format[j] == 'l' || format[j] == 'L')
-	{
-		if (format[j - 1] == 'l' || format[j - 1] == 'h')
-		{
-			spec.size[1] = format[j];
-			j--;
-		}
-		else
-			spec.size[1] = '\0';
-		spec.size[0] = format[j];
-		format[j] = '\0';
-	}
+		process_specifier2(format, &j, &spec);
 	else
 		spec.size[0] = '\0';
 	if (dot)
@@ -98,10 +88,23 @@ void		process_specifier(char *format, va_list *ap)
 	call_specifier(ap, &spec, flag);
 }
 
-void	one_percent_only(char *format)
+void		process_specifier2(char *format, int *j, t_spec	*spec)
 {
-	int	i;
-	int	j;
+	if (format[j[0] - 1] == 'l' || format[j[0] - 1] == 'h')
+	{
+		spec->size[1] = format[j[0]];
+		j[0]--;
+	}
+	else
+		spec->size[1] = '\0';
+	spec->size[0] = format[j[0]];
+	format[j[0]] = '\0';
+}
+
+void		one_percent_only(char *format)
+{
+	int		i;
+	int		j;
 	char	*str;
 
 	j = 0;
@@ -134,7 +137,7 @@ static void	ft_swapp(char *a, char *b)
 	*b = tmp;
 }
 
-void    	print_param(char *res)
+void		print_param(char *res)
 {
 	int		i;
 	char	*point;
@@ -190,9 +193,9 @@ void		call_specifier(va_list *ap, t_spec *spec, int flag)
 	while (count < flag)
 	{
 		count++;
-		if ((spec->flags[count] == '-' || spec->flags[count] == ' ' || 
+		if ((spec->flags[count] == '-' || spec->flags[count] == ' ' ||
 			spec->flags[count] == '+') && spec->type != 's')
-            res = precise_specifier(res, spec);
+			res = precise_specifier(res, spec);
 		res = flag_specifier(res, spec, count);
 	}
 	if (spec->precision != -1)
