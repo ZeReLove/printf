@@ -6,7 +6,7 @@
 /*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
-/*   Updated: 2019/04/26 17:38:13 by mrolfe           ###   ########.fr       */
+/*   Updated: 2019/04/29 18:36:29 by mrolfe           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,23 +92,21 @@ char	*other_precise(char *res, t_spec *spec)
 		return (res);
 	}
 	if (params.len < spec->precision && spec->type != '%')
-		return (other_precise2(res, spec));
+		return (other_precise2(res, spec, &params));
 	return (res);
 }
 
-char	*other_precise2(char *res, t_spec *spec)
+char	*other_precise2(char *res, t_spec *spec, t_precise *params)
 {
-	char	*ret;
-	int		len;
-
-	len = ft_strlen(res);
-	if (!(ret = ft_strnew((int)spec->precision)))
+	params->i = 0;
+	params->len = ft_strlen(res);
+	if (!(params->ret = ft_strnew((int)spec->precision)))
 		return (NULL);
-	while (i < spec->precision - len)
-		ret[i++] = '0';
-	ft_strcpy(&ret[i], (char*)res);
+	while (params->i < spec->precision - params->len)
+		params->ret[params->i++] = '0';
+	ft_strcpy(&params->ret[params->i], (char*)res);
 	free((char*)res);
-	return (ret);
+	return (params->ret);
 }
 
 char	*s_precise(char *res, t_spec *spec)

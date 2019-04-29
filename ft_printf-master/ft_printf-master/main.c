@@ -8,8 +8,8 @@ int main()
     char    *p;
     char    a;
 
-    i = ft_printf("%-+10.5d\n", 4242);
-    f = printf("%-+10.5d\n", 4242);
+    i = ft_printf("%03.2d\n", 0);
+    f = printf("%03.2d\n", 0);
     printf("%i\n", i);
     printf("%i\n", f);
     //ft_printf("The number is %.5f\n", f);

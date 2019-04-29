@@ -6,7 +6,7 @@
 /*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
-/*   Updated: 2019/04/26 18:11:36 by mrolfe           ###   ########.fr       */
+/*   Updated: 2019/04/29 18:49:51 by mrolfe           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,12 @@
 
 void		process_specifier(char *format, va_list *ap)
 {
-	int		dot;
-	int		j;
-	t_spec	spec;
-	int		k;
-	int		flag;
+	t_process process;
 
-	dot = 0;
-	flag = -1;
-	k = 0;
-	find_width_param(&format[i], ap, &spec);
+	process.dot = 0;
+	process.flag = -1;
+	process.k = 0;
+	find_width_param(&format[i], ap, &process.spec);
 	i++;
 	while (format[i] && format[i] != 'c' && format[i] != 's' && format[i] != 'p'
 			&& format[i] != 'd' && format[i] != 'i' && format[i] != 'o' &&
@@ -31,7 +27,7 @@ void		process_specifier(char *format, va_list *ap)
 			format[i] != 'f' && format[i] != '%')
 	{
 		if (format[i] == '.')
-			dot = 1;
+			process.dot = 1;
 		i++;
 	}
 	if (format[i] == '\0')
@@ -39,56 +35,72 @@ void		process_specifier(char *format, va_list *ap)
 		one_percent_only(format);
 		return ;
 	}
-	spec.type = format[i];
-	j = i;
+	process_specifier5(format, ap, &process.spec, &process);
+}
+
+void		process_specifier5(char *format, va_list *ap, t_spec *spec, t_process *process)
+{
+	spec->type = format[i];
+	process->j = i;
 	i++;
-	format[j--] = '\0';
-	if (format[j] == 'h' || format[j] == 'l' || format[j] == 'L')
-		process_specifier2(format, &j, &spec);
+	format[process->j--] = '\0';
+	if (format[process->j] == 'h' || format[process->j] == 'l' || 
+		format[process->j] == 'L')
+		process_specifier2(format, &process->spec, &process->j);
 	else
-		spec.size[0] = '\0';
-	if (dot)
-	{
-		while (format[j] != '.')
-			j--;
-		if (format[j + 1] == '*')
-			spec.precision = va_arg(*ap, int);
-		if (format[j + 1] == '\0')
-			spec.precision = 0;
-		else
-			spec.precision = ft_atoi((char*)(&format[j + 1]));
-		format[j] = '\0';
-	}
+		spec->size[0] = '\0';
+	if (process->dot)
+		process_specifier3(format, &process->spec, &process->j, ap);
 	else
-		spec.precision = -1;
-	while (format[j] != '%')
-		j--;
-	j++;
-	while (format[j] == '0' || format[j] == '#' || format[j] == '+'
-			|| format[j] == '-' || format[j] == ' ')
-	{
-		while (k < 5)
+		spec->precision = -1;
+	while (format[process->j] != '%')
+		process->j--;
+	process->j++;
+	while (format[process->j] == '0' || format[process->j] == '#' || 
+			format[process->j] == '+' || format[process->j] == '-' || 
+			format[process->j] == ' ')
+		process_specifier4(format, &process->spec, process->flag, &process->j);
+	if (format[process->j] <= '9' && format[process->j] >= '1')
+		spec->width = ft_atoi((char*)(&format[process->j]));
+	else
+		spec->width = -1;
+	call_specifier(ap, &process->spec, process->flag);
+}
+
+void		process_specifier4(char *format, t_spec	*spec, int flag, int *j)
+{
+	int k;
+
+	k = 0;
+	while (k < 5)
 		{
-			if (spec.flags[k] == format[j])
+			if (spec->flags[k] == format[j[0]])
 				break ;
 			k++;
 		}
 		if (k == 5)
 		{
 			flag++;
-			spec.flags[flag] = format[j];
+			spec->flags[flag] = format[j[0]];
 		}
-		j++;
+		j[0]++;
 		k = 0;
-	}
-	if (format[j] <= '9' && format[j] >= '1')
-		spec.width = ft_atoi((char*)(&format[j]));
-	else
-		spec.width = -1;
-	call_specifier(ap, &spec, flag);
 }
 
-void		process_specifier2(char *format, int *j, t_spec	*spec)
+void		process_specifier3(char *format, t_spec	*spec, int *j, va_list *ap)
+{	
+	while (format[j[0]] != '.')
+			j[0]--;
+		if (format[j[0] + 1] == '*')
+			spec->precision = va_arg(*ap, int);
+		if (format[j[0] + 1] == '\0')
+			spec->precision = 0;
+		else
+			spec->precision = ft_atoi((char*)(&format[j[0] + 1]));
+		format[j[0]] = '\0';
+}
+
+void		process_specifier2(char *format,  t_spec *spec, int *j)
 {
 	if (format[j[0] - 1] == 'l' || format[j[0] - 1] == 'h')
 	{
@@ -100,6 +112,7 @@ void		process_specifier2(char *format, int *j, t_spec	*spec)
 	spec->size[0] = format[j[0]];
 	format[j[0]] = '\0';
 }
+
 
 void		one_percent_only(char *format)
 {
