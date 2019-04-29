@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_fitoa.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
+/*   Updated: 2019/04/29 20:20:58 by mrolfe           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 static size_t		ft_digits(long double num)
 {
-	size_t i;
+	size_t		i;
 	long long	n;
 
 	n = (int)num;
@@ -17,31 +29,31 @@ static size_t		ft_digits(long double num)
 	return (i);
 }
 
-static size_t  dig_after_dot(long double *num, size_t *zero_count)
+static size_t		dig_after_dot(long double *num, size_t *zero_count)
 {
-    size_t  	count;
+	size_t		count;
 	long long	n;
 	long double	nb;
 
-    count = 0;
+	count = 0;
 	*zero_count = 0;
 	n = (int)(*num);
 	if (n == 0)
 		(*zero_count)++;
 	nb = n;
-    while (nb < *num && count < 6)
-    {
-        *num *= 10;
+	while (nb < *num && count < 6)
+	{
+		*num *= 10;
 		n = (int)(*num);
 		if (n == 0)
 			(*zero_count)++;
 		nb = n;
-        count++;
-    }
+		count++;
+	}
 	return (count);
 }
 
-char	*ft_fitoa(long double num)
+char				*ft_fitoa(long double num)
 {
 	char        *str;
 	long double nb;
@@ -54,7 +66,7 @@ char	*ft_fitoa(long double num)
 	nb = num;
 	if (num < 0)
 		nb *= -1;
-    dig = dig_after_dot(&nb, &zero_count);
+	dig = dig_after_dot(&nb, &zero_count);
 	n = (int)nb;
 	i = ft_digits(nb) + 1 + zero_count;
 	tmp = i;

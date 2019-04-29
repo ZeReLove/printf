@@ -6,7 +6,7 @@
 /*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
-/*   Updated: 2019/04/25 17:17:29 by mrolfe           ###   ########.fr       */
+/*   Updated: 2019/04/29 20:02:02 by mrolfe           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,7 @@ char		*width_specifier(char *res, t_spec *spec)
 		spec->width -= 1;
 	size = spec->width;
 	while (spec->flags[i])
-	{
-		if (spec->flags[i] == '-')
-		{
-			res = minus_flag(res, spec);
-			return (res);
-		}
-		if (spec->flags[i] == '0' && (spec->type == 'o' || spec->type == 's'))
-		{
-			res = zero_flag(res, spec);
-			return (res);
-		}
-		i++;
-	}
+		width_specifier2(&res, spec);
 	i = 0;
 	if (len < spec->width)
 	{
@@ -50,4 +38,19 @@ char		*width_specifier(char *res, t_spec *spec)
 		return (ret);
 	}
 	return (res);
+}
+
+void		width_specifier2(char **res, t_spec *spec)
+{
+	if (spec->flags[i] == '-')
+	{
+		res[0] = minus_flag(res[0], spec);
+		return ;
+	}
+	if (spec->flags[i] == '0' && (spec->type == 'o' || spec->type == 's'))
+	{
+		res[0] = zero_flag(res[0], spec);
+		return ;
+	}
+	i++;
 }

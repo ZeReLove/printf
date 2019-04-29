@@ -6,7 +6,7 @@
 /*   By: mrolfe <mrolfe@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/25 17:05:42 by mrolfe            #+#    #+#             */
-/*   Updated: 2019/04/26 19:21:20 by mrolfe           ###   ########.fr       */
+/*   Updated: 2019/04/29 20:04:06 by mrolfe           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char	*zero_flag(char *res, t_spec *spec)
 		spec->type == 's' || spec->type == 'c' || spec->type == '%')
 	{
 		if (len < spec->width)
-			return(zero_flag2(&res, spec, &len));
+			return (zero_flag2(&res, spec, &len));
 	}
 	return (res);
 }
@@ -112,7 +112,6 @@ char	*plus_flag(char *res, t_spec *spec)
 			else
 				return (plus_flag3(res, &len));
 		}
-			
 	}
 	return (res);
 }
@@ -176,9 +175,9 @@ char	*hash_flag_forx_bigx(char *res, t_spec *spec, int *len)
 		return (NULL);
 	ret[0] = '0';
 	if (spec->type == 'x')
-			ret[1] = 'x';
+		ret[1] = 'x';
 	if (spec->type == 'X')
-			ret[1] = 'X';
+		ret[1] = 'X';
 	ft_strcpy(&ret[2], (char*)res);
 	free((char*)res);
 	return (ret);
